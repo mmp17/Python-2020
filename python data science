@@ -1,0 +1,36 @@
+import requests
+from bs4 import BeautifulSoup
+
+url = ''
+res=requests.get(url)
+text=res.content
+print(text)
+soup=BeautifulSoup(text, 'xml')
+
+value=soup.select('wanted')
+print(value[0].wantedAuthNo.text,value[0].company.text, value[0].title.text)
+
+count=1
+for wanted in value:
+    print(count, '=================================')
+    print('인증키번호:',wanted.wantedAuthNo.text,
+         '\n회사명:', wanted.company.text,
+         'n구인제목:', wanted.title.text)
+    count+=1 
+    
+import pandas as pd
+data=[]
+for wanted in value:
+    print(count, '=================================')
+    data.append([wanted.wantedAuthNo.text, wanted.company.text, wanted.title.text])
+    print('인증키번호:',wanted.wantedAuthNo.text,
+         '\n회사명:', wanted.company.text,
+         'n구인제목:', wanted.title.text)
+    count+=1 
+print(data)
+com=pd.DataFrame(data,columns=['인증키번호', "회사명", '구인제목'])
+print(com)
+pd.set_option('display.max_columns',100,
+             'display.max_rows',200)
+print(com)
+com.to_excel('testdata.xlsx', index=False)
